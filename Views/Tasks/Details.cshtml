@@ -1,0 +1,192 @@
+@model TaskManagementSystem.ViewModels.TaskViewModel
+
+@{
+    ViewData["Title"] = "Task Details";
+    var statusColor = Model.Status switch
+    {
+        TaskManagementSystem.Models.TaskStatus.ToDo => "warning",
+        TaskManagementSystem.Models.TaskStatus.InProgress => "info",
+        TaskManagementSystem.Models.TaskStatus.Done => "success",
+        _ => "secondary"
+    };
+    
+    var priorityColor = Model.Priority switch
+    {
+        TaskManagementSystem.Models.TaskPriority.Low => "info",
+        TaskManagementSystem.Models.TaskPriority.Medium => "warning",
+        TaskManagementSystem.Models.TaskPriority.High => "danger",
+        _ => "secondary"
+    };
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <a asp-action="Index" asp-route-projectId="@Model.ProjectId" class="btn btn-link">
+                <i class="fas fa-chevron-left"></i> Back to Tasks
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="m-0">
+                        <i class="fas fa-tasks"></i> @Model.Title
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Status</h6>
+                            <span class="badge bg-@statusColor text-white p-2">@Model.Status</span>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Priority</h6>
+                            <span class="badge bg-@priorityColor text-white p-2">@Model.Priority</span>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mb-4">
+                            <h6 class="text-muted"><i class="fas fa-align-left"></i> Description</h6>
+                            <p class="card-text">@Model.Description</p>
+                        </div>
+                    }
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-muted"><i class="fas fa-calendar"></i> Deadline</h6>
+                            @if (Model.Deadline.HasValue)
+                            {
+                                var isOverdue = Model.Deadline.Value < DateTime.Now && Model.Status != TaskManagementSystem.Models.TaskStatus.Done;
+                                <p class="@(isOverdue ? "text-danger font-weight-bold" : "")">
+                                    @Model.Deadline.Value.ToString("MMMM dd, yyyy HH:mm")
+                                    @if (isOverdue)
+                                    {
+                                        <span class="badge bg-danger ml-2">OVERDUE</span>
+                                    }
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No deadline</p>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted"><i class="fas fa-user"></i> Assigned To</h6>
+                            @if (!string.IsNullOrEmpty(Model.AssignedUserName))
+                            {
+                                <p>
+                                    <i class="fas fa-user-circle text-primary"></i> <strong>@Model.AssignedUserName</strong>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Unassigned</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted"><i class="fas fa-sitemap"></i> Project</h6>
+                        <p>
+                            <a asp-controller="Tasks" asp-action="Index" asp-route-projectId="@Model.ProjectId">
+                                @Model.ProjectName
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-muted"><i class="fas fa-clock"></i> Created</h6>
+                        <p>@Model.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</p>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button class="btn btn-danger delete-task-detail" data-id="@Model.Id">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-none" id="delete-form-detail"></form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="m-0">
+                        <i class="fas fa-comments"></i> Comments (@Model.Comments.Count())
+                    </h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (Model.Comments.Any())
+                    {
+                        @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                        {
+                            <div class="card mb-2 border-light">
+                                <div class="card-body p-2">
+                                    <div class="d-flex align-items-center mb-2 pb-2 border-bottom">
+                                        <img src="@comment.UserProfileImage" alt="@comment.UserName" 
+                                             class="rounded-circle me-2" width="32" height="32" 
+                                             onerror="this.src='/images/default-avatar.svg'" />
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">@comment.UserName</strong>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock"></i> @comment.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <p class="card-text mb-0">@comment.Content</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-4">No comments yet</p>
+                    }
+                </div>
+                <div class="card-footer bg-light">
+                    <form asp-action="AddComment" method="post">
+                        <input type="hidden" name="taskId" value="@Model.Id" />
+                        <div class="input-group">
+                            <textarea name="content" class="form-control" placeholder="Add a comment..." rows="2"></textarea>
+                            <button type="submit" class="btn btn-primary" title="Add comment">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete-task-detail').on('click', function () {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#delete-form-detail').submit();
+                    }
+                })
+            });
+        });
+    </script>
+}

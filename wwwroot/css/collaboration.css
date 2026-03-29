@@ -1,0 +1,124 @@
+/* Team Collaboration & Enhanced Features */
+
+/* Enhanced Footer */
+footer {
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    transition: background 0.3s ease;
+}
+
+html[data-bs-theme="dark"] footer {
+    background: linear-gradient(to bottom, #1a1a1a, #141414);
+    border-top-color: #333;
+}
+
+footer a {
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--primary-color) !important;
+    text-decoration: none;
+}
+
+footer .fab,
+footer .fas {
+    transition: transform 0.3s ease;
+}
+
+footer a:hover .fab,
+footer a:hover .fas {
+    transform: translateY(-3px);
+}
+
+/* Collaborator Badge */
+.collaborator-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    margin: 0.25rem;
+}
+
+html[data-bs-theme="dark"] .collaborator-badge {
+    background: #1a237e;
+    border-color: #3f51b5;
+    color: #90caf9;
+}
+
+.collaborator-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* Role Badges */
+.role-badge-editor {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.role-badge-contributor {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.role-badge-viewer {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+html[data-bs-theme="dark"] .role-badge-editor {
+    background: #1b5e20;
+}
+
+html[data-bs-theme="dark"] .role-badge-contributor {
+    background: #0d47a1;
+}
+
+html[data-bs-theme="dark"] .role-badge-viewer {
+    background: #4a148c;
+}
+
+/* Card hover effect */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Admin Control Panel */
+.admin-control-panel {
+    background: linear-gradient(135deg, #fff3cd 0%, #fffbea 100%);
+    border-left: 4px solid #ffc107;
+}
+
+/* Performance metrics */
+.performance-stat {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.performance-stat h5 {
+    font-weight: 700;
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.performance-stat small {
+    font-size: 0.85rem;
+    font-weight: 500;
+}

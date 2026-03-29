@@ -1,0 +1,63 @@
+@model IEnumerable<TaskManagementSystem.Models.Project>
+
+@{
+    ViewData["Title"] = "Select Project";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-1"><i class="fas fa-project-diagram"></i> Select a Project</h2>
+            <p class="text-muted">Choose a project to view its tasks</p>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var project in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm border-0 project-card" style="transition: transform 0.2s;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-folder text-primary"></i> @project.Name
+                            </h5>
+                            <span class="badge bg-primary">@project.Tasks?.Count ?? 0 tasks</span>
+                        </div>
+                        
+                        <p class="card-text text-muted small">
+                            @project.Description
+                        </p>
+
+                        <div class="d-grid">
+                            <a href="@Url.Action("Index", "Tasks", new { projectId = project.Id })" class="btn btn-primary btn-sm">
+                                <i class="fas fa-tasks"></i> View Tasks
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-top text-muted small">
+                        <i class="fas fa-user"></i> Owner: @project.Owner?.FullName
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-inbox fa-3x text-muted mb-3 d-block"></i>
+            <p class="text-muted mb-3">You don't have any projects yet</p>
+            <a href="@Url.Action("Create", "Projects")" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Your First Project
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+    }
+</style>

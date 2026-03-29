@@ -1,0 +1,344 @@
+@model TaskManagementSystem.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0"><i class="fas fa-chart-line"></i> Dashboard</h1>
+        <a href="@Url.Action("Index", "Activities")" class="btn btn-outline-primary">
+            <i class="fas fa-history"></i> Activity Log
+        </a>
+    </div>
+
+    <!-- Quick Access Panel -->
+    <div class="quick-access-panel">
+        <h4><i class="fas fa-rocket"></i> Quick Access</h4>
+        <div class="row">
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="@Url.Action("Index", "Projects")" class="btn btn-light w-100">
+                    <i class="fas fa-folder"></i> View Projects
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="@Url.Action("Index", "Projects")" class="btn btn-light w-100" onclick="selectFirstProject(event)">
+                    <i class="fas fa-tasks"></i> Go to Tasks
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="@Url.Action("Create", "Projects")" class="btn btn-light w-100">
+                    <i class="fas fa-plus-circle"></i> New Project
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
+                <a href="@Url.Action("Index", "Activities")" class="btn btn-light w-100">
+                    <i class="fas fa-bell"></i> Recent Activity
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-2"><i class="fas fa-folder-open"></i> Total Projects</h6>
+                            <h3 class="mb-0 text-primary">@Model.TotalProjects</h3>
+                        </div>
+                        <div class="display-4 text-primary opacity-25">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-2"><i class="fas fa-list"></i> Total Tasks</h6>
+                            <h3 class="mb-0 text-success">@Model.TotalTasks</h3>
+                        </div>
+                        <div class="display-4 text-success opacity-25">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-2"><i class="fas fa-clock"></i> Overdue Tasks</h6>
+                            <h3 class="mb-0 text-danger">@Model.OverdueTasks</h3>
+                        </div>
+                        <div class="display-4 text-danger opacity-25">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted mb-2"><i class="fas fa-spinner"></i> In Progress</h6>
+                            <h3 class="mb-0 text-info">@Model.TasksInProgress</h3>
+                        </div>
+                        <div class="display-4 text-info opacity-25">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- This Month Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 bg-light">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h6 class="text-muted mb-2"><i class="fas fa-calendar"></i> Completed This Month</h6>
+                            <h3 class="mb-0 text-info">@Model.CompletedTasksThisMonth</h3>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x text-info opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 bg-light">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h6 class="text-muted mb-2"><i class="fas fa-tachometer-alt"></i> Completion Rate</h6>
+                            <h3 class="mb-0">@Model.AvgCompletionRate.ToString("F1")%</h3>
+                        </div>
+                        <i class="fas fa-chart-pie fa-3x opacity-25"></i>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @Model.AvgCompletionRate%;" aria-valuenow="@Model.AvgCompletionRate" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Task Distribution Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-chart-doughnut"></i> Task Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <div style="position: relative; height: 300px;">
+                        <canvas id="taskDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-history"></i> Recent Activities</h6>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.RecentActivities.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var activity in Model.RecentActivities)
+                            {
+                                <li class="list-group-item border-0 py-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-2">
+                                            @if (activity.ActionType == "Created")
+                                            {
+                                                <span class="badge bg-success"><i class="fas fa-plus"></i></span>
+                                            }
+                                            else if (activity.ActionType == "Updated")
+                                            {
+                                                <span class="badge bg-info"><i class="fas fa-edit"></i></span>
+                                            }
+                                            else if (activity.ActionType == "Deleted")
+                                            {
+                                                <span class="badge bg-danger"><i class="fas fa-trash"></i></span>
+                                            }
+                                            else if (activity.ActionType == "Commented")
+                                            {
+                                                <span class="badge bg-warning"><i class="fas fa-comment"></i></span>
+                                            }
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-1 small">@activity.Description</p>
+                                            <small class="text-muted">@activity.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center text-muted">
+                            <i class="fas fa-inbox fa-2x mb-2 opacity-50"></i>
+                            <p>No recent activities</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Tasks -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0 font-weight-bold"><i class="fas fa-tasks"></i> Recent Tasks</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentTasks.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-heading"></i> Title</th>
+                                        <th><i class="fas fa-info-circle"></i> Status</th>
+                                        <th><i class="fas fa-flag"></i> Priority</th>
+                                        <th><i class="fas fa-calendar"></i> Created</th>
+                                        <th><i class="fas fa-link"></i> Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var task in Model.RecentTasks)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@task.Title</strong>
+                                            </td>
+                                            <td>
+                                                @switch (task.Status.ToString())
+                                                {
+                                                    case "ToDo":
+                                                        <span class="badge bg-secondary"><i class="fas fa-circle"></i> To Do</span>
+                                                        break;
+                                                    case "InProgress":
+                                                        <span class="badge bg-warning"><i class="fas fa-hourglass-half"></i> In Progress</span>
+                                                        break;
+                                                    case "Done":
+                                                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Done</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @switch (task.Priority.ToString())
+                                                {
+                                                    case "Low":
+                                                        <span class="badge bg-info"><i class="fas fa-arrow-down"></i> Low</span>
+                                                        break;
+                                                    case "Medium":
+                                                        <span class="badge bg-warning"><i class="fas fa-minus"></i> Medium</span>
+                                                        break;
+                                                    case "High":
+                                                        <span class="badge bg-danger"><i class="fas fa-arrow-up"></i> High</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <small>@task.CreatedAt.ToString("dd/MM/yyyy")</small>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0)" onclick="window.location.href='@Url.Action("Details", "Tasks", new { id = task.Id })'" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-arrow-right"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center p-4">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3 opacity-50"></i>
+                            <p class="text-muted">No recent tasks</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Task distribution chart
+        var ctx = document.getElementById('taskDistributionChart').getContext('2d');
+        var labels = [];
+        var data = [];
+        
+        @foreach (var kvp in Model.TaskDistribution)
+        {
+            @:labels.push('@kvp.Key');
+            @:data.push(@kvp.Value);
+        }
+
+        var taskDistributionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        function selectFirstProject(event) {
+            event.preventDefault();
+            alert('Choose a project from the Projects page to view its tasks.');
+            window.location.href = '@Url.Action("Index", "Projects")';
+        }
+    </script>
+}
