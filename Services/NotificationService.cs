@@ -121,7 +121,7 @@ namespace TaskManagementSystem.Services
             var assignedUser = await _context.Users.FindAsync(assignedUserId);
             if (assignedUser != null)
             {
-                var message = $"تم إسناد لك مهمة: {task.Title}";
+                var message = $"Ass task → {task.Title}";
                 var actionUrl = $"/Tasks/Details/{task.Id}";
                 
                 await CreateNotificationAsync(
@@ -145,7 +145,7 @@ namespace TaskManagementSystem.Services
                 var projectOwner = await _context.Users.FindAsync(project.OwnerId);
                 if (projectOwner != null)
                 {
-                    var message = $"تم إكمال المهمة: {task.Title}";
+                    var message = $"Complete task → {task.Title}";
                     var actionUrl = $"/Tasks/Details/{task.Id}";
                     
                     await CreateNotificationAsync(
@@ -165,7 +165,7 @@ namespace TaskManagementSystem.Services
         {
             if (!string.IsNullOrEmpty(task.AssignedUserId) && task.AssignedUserId != triggeredByUserId)
             {
-                var message = $"تم تحديث المهمة: {task.Title}";
+                var message = $"Update task → {task.Title}";
                 var actionUrl = $"/Tasks/Details/{task.Id}";
                 
                 await CreateNotificationAsync(
@@ -187,7 +187,7 @@ namespace TaskManagementSystem.Services
                 var daysUntilDeadline = (task.Deadline.Value - DateTime.UtcNow).TotalDays;
                 if (daysUntilDeadline <= 1 && daysUntilDeadline > 0)
                 {
-                    var message = $"تذكير: الموعد النهائي للمهمة '{task.Title}' غداً";
+                    var message = $"Deadline reminder: '{task.Title}' tomorrow";
                     var actionUrl = $"/Tasks/Details/{task.Id}";
                     
                     await CreateNotificationAsync(

@@ -62,11 +62,11 @@ namespace TaskManagementSystem.Controllers
                 await _projectRepository.AddAsync(project);
                 await _projectRepository.SaveChangesAsync();
                 
-                // تسجيل النشاط
+          
                 var activity = new Activity
                 {
                     ActionType = "Created",
-                    Description = $"تم إنشاء مشروع جديد: {project.Name}",
+                    Description = $"Created Done : {project.Name}",
                     ProjectId = project.Id,
                     UserId = project.OwnerId,
                     CreatedAt = System.DateTime.Now
@@ -124,11 +124,11 @@ namespace TaskManagementSystem.Controllers
                 _projectRepository.Update(project);
                 await _projectRepository.SaveChangesAsync();
                 
-                // تسجيل النشاط
+          
                 var activity = new Activity
                 {
                     ActionType = "Updated",
-                    Description = $"تم تحديث المشروع: {project.Name}",
+                    Description = $"Updated Project: {project.Name}",
                     ProjectId = project.Id,
                     UserId = userId,
                     CreatedAt = System.DateTime.Now
@@ -160,12 +160,11 @@ namespace TaskManagementSystem.Controllers
             _projectRepository.Remove(project);
             await _projectRepository.SaveChangesAsync();
             
-            // تسجيل النشاط
             var activity = new Activity
             {
                 ActionType = "Deleted",
-                Description = $"تم حذف المشروع: {project.Name}",
-                ProjectId = null, // المشروع تم حذفه، لا يمكن الاحتفاظ بالمعرف
+                Description = $"Deleted Project: {project.Name}",
+                ProjectId = null, // any project-level activity can be null since the project is deleted
                 UserId = userId,
                 CreatedAt = System.DateTime.Now
             };

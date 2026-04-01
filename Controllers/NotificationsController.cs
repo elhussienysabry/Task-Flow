@@ -24,15 +24,13 @@ namespace TaskManagementSystem.Controllers
             _userManager = userManager;
         }
 
-        /// <summary>
-        /// الحصول على إشعارات المستخدم
-        /// </summary>
+
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<Notification>>> GetUserNotifications(string userId, int page = 1)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             
-            // يمكن للمستخدم فقط رؤية إشعاراته الخاصة
+        
             if (currentUser?.Id != userId)
             {
                 return Forbid();
@@ -42,9 +40,6 @@ namespace TaskManagementSystem.Controllers
             return Ok(notifications);
         }
 
-        /// <summary>
-        /// الحصول على عدد الإشعارات غير المقروءة
-        /// </summary>
         [HttpGet("unread-count")]
         public async Task<ActionResult<int>> GetUnreadCount()
         {
@@ -56,9 +51,6 @@ namespace TaskManagementSystem.Controllers
             return Ok(count);
         }
 
-        /// <summary>
-        /// تحديد الإشعار كمقروء
-        /// </summary>
         [HttpPost("{notificationId}/read")]
         public async Task<IActionResult> MarkAsRead(int notificationId)
         {
@@ -66,9 +58,7 @@ namespace TaskManagementSystem.Controllers
             return Ok();
         }
 
-        /// <summary>
-        /// تحديد جميع الإشعارات كمقروءة
-        /// </summary>
+    
         [HttpPost("mark-all-read")]
         public async Task<IActionResult> MarkAllAsRead()
         {
@@ -79,10 +69,7 @@ namespace TaskManagementSystem.Controllers
             await _notificationService.MarkAllAsReadAsync(currentUser.Id);
             return Ok();
         }
-
-        /// <summary>
-        /// حذف إشعار
-        /// </summary>
+        
         [HttpDelete("{notificationId}")]
         public async Task<IActionResult> DeleteNotification(int notificationId)
         {

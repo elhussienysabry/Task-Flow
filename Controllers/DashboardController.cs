@@ -53,7 +53,6 @@ namespace TaskManagementSystem.Controllers
 
             var tasksInProgress = userTasks.Where(t => t.Status == Models.TaskStatus.InProgress).Count();
 
-            // احصائيات هذا الشهر
             var currentMonth = System.DateTime.Now.Month;
             var currentYear = System.DateTime.Now.Year;
             var completedThisMonth = userTasks.Where(t => 
@@ -62,12 +61,10 @@ namespace TaskManagementSystem.Controllers
                 t.CreatedAt.Year == currentYear
             ).Count();
 
-            // حساب نسبة الإنجاز
             var avgCompletion = userTasks.Count > 0 
                 ? (double)userTasks.Count(t => t.Status == Models.TaskStatus.Done) / userTasks.Count * 100 
                 : 0;
 
-            // الأنشطة المؤخرة
             var activities = await _activityRepository.GetAllAsync();
             var userActivities = activities.Where(a => a.UserId == userId)
                 .OrderByDescending(a => a.CreatedAt)

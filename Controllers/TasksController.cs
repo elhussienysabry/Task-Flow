@@ -42,7 +42,7 @@ namespace TaskManagementSystem.Controllers
 
         public async Task<IActionResult> Index(int projectId, string searchString, Models.TaskStatus? status, TaskPriority? priority)
         {
-            // إذا لم يتم تحديد مشروع، طلب من المستخدم الاختيار
+          
             if (projectId == 0)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
@@ -51,14 +51,14 @@ namespace TaskManagementSystem.Controllers
                 if (!userProjects.Any())
                     return RedirectToAction("Create", "Projects");
                 
-                // إذا كان لديه مشروع واحد فقط، اختره تلقائياً
+              
                 if (userProjects.Count() == 1)
                 {
                     projectId = userProjects.First().Id;
                 }
                 else
                 {
-                    // إعادة توجيه إلى صفحة اختيار المشروع
+                
                     return RedirectToAction("SelectProject");
                 }
             }
@@ -108,7 +108,7 @@ namespace TaskManagementSystem.Controllers
 
         public async Task<IActionResult> Create(int projectId)
         {
-            // احصل على المستخدمين العاديين فقط (ليس Admin)
+          
             var users = await _userManager.Users.ToListAsync();
             var nonAdminUsers = new System.Collections.Generic.List<ApplicationUser>();
             
@@ -143,7 +143,7 @@ namespace TaskManagementSystem.Controllers
                 var activity = new Activity
                 {
                     ActionType = "Created",
-                    Description = $"تم إنشاء مهمة جديدة: {task.Title}",
+                    Description = $"Created Task: {task.Title}",
                     TaskId = task.Id,
                     ProjectId = task.ProjectId,
                     UserId = userId,
@@ -152,14 +152,14 @@ namespace TaskManagementSystem.Controllers
                 await _activityRepository.AddAsync(activity);
                 await _activityRepository.SaveChangesAsync();
 
-                // إذا تم تعيين للمستخدم، أرسل إشعار
+            
                 if (!string.IsNullOrEmpty(task.AssignedUserId))
                 {
                     await _notificationService.NotifyTaskAssignmentAsync(task, task.AssignedUserId, userId);
                     await _watcherRepository.AddWatcherAsync(task.Id, task.AssignedUserId, WatcherType.Assigned);
                 }
 
-                // أضف منشئ المهمة كمتابع
+          
                 await _watcherRepository.AddWatcherAsync(task.Id, userId, WatcherType.Reporter);
                 
                 return RedirectToAction(nameof(Index), new { projectId = model.ProjectId });
@@ -211,7 +211,7 @@ namespace TaskManagementSystem.Controllers
                 var activity = new Activity
                 {
                     ActionType = "Updated",
-                    Description = $"تم تحديث المهمة: {task.Title}",
+                    Description = $"Updated Task: {task.Title}",
                     TaskId = task.Id,
                     ProjectId = task.ProjectId,
                     UserId = userId,
@@ -220,7 +220,7 @@ namespace TaskManagementSystem.Controllers
                 await _activityRepository.AddAsync(activity);
                 await _activityRepository.SaveChangesAsync();
 
-                // إرسال إشعارات التغييرات
+           
                 if (oldAssignedUserId != task.AssignedUserId)
                 {
                     if (!string.IsNullOrEmpty(task.AssignedUserId))
@@ -246,9 +246,9 @@ namespace TaskManagementSystem.Controllers
                 {
                     await _notificationService.CreateNotificationAsync(
                         task.AssignedUserId,
-                        $"تم تغيير أولوية المهمة: {task.Title}",
+                        $"Change Priority: {task.Title}",
                         NotificationType.TaskPriorityChanged,
-                        $"الأولوية الجديدة: {task.Priority}",
+                        $"New Priority: {task.Priority}",
                         task.Id,
                         task.ProjectId,
                         $"/Tasks/Details/{task.Id}",
@@ -278,13 +278,13 @@ namespace TaskManagementSystem.Controllers
             _taskRepository.Remove(task);
             await _taskRepository.SaveChangesAsync();
             
-            // تسجيل النشاط
+   
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var activity = new Activity
             {
                 ActionType = "Deleted",
-                Description = $"تم حذف المهمة: {taskTitle}",
-                TaskId = null, // المهمة تم حذفها
+                Description = $"Deleted Task: {taskTitle}",
+                TaskId = null, 
                 ProjectId = projectId,
                 UserId = userId,
                 CreatedAt = System.DateTime.Now
@@ -320,7 +320,7 @@ namespace TaskManagementSystem.Controllers
             var activity = new Activity
             {
                 ActionType = "Commented",
-                Description = $"تم إضافة تعليق على المهمة: {task.Title}",
+                Description = $"Commented on Task: {task.Title}",
                 TaskId = taskId,
                 ProjectId = task.ProjectId,
                 UserId = userId,
@@ -329,12 +329,12 @@ namespace TaskManagementSystem.Controllers
             await _activityRepository.AddAsync(activity);
             await _activityRepository.SaveChangesAsync();
 
-            // إشعار بالتعليق الجديد
+    
             if (!string.IsNullOrEmpty(task.AssignedUserId) && task.AssignedUserId != userId)
             {
                 await _notificationService.CreateNotificationAsync(
                     task.AssignedUserId,
-                    $"تم إضافة تعليق على المهمة: {task.Title}",
+                    $"Commented on Task: {task.Title}",
                     NotificationType.CommentAdded,
                     content,
                     task.Id,

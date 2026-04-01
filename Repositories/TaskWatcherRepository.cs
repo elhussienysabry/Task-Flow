@@ -29,7 +29,7 @@ namespace TaskManagementSystem.Repositories
 
         public async System.Threading.Tasks.Task AddWatcherAsync(int taskId, string userId, WatcherType watchType = WatcherType.Normal)
         {
-            // تحقق من عدم وجود المتابع بالفعل
+        
             var existingWatcher = await _context.TaskWatchers
                 .FirstOrDefaultAsync(w => w.TaskId == taskId && w.UserId == userId);
 

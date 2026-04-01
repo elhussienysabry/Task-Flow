@@ -27,7 +27,7 @@ namespace TaskManagementSystem.Controllers
             
             var activities = await _activityRepository.GetAllAsync();
             
-            // عرض الأنشطة الخاصة بالمستخدم الحالي فقط
+           
             var userActivities = activities.Where(a => a.UserId == userId)
                 .OrderByDescending(a => a.CreatedAt)
                 .ToList();
